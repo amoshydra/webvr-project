@@ -31,6 +31,6 @@
   "scripts": {
     "dev": "webpack-dev-server --open",
     "build": "webpack",
-    "deploy": "yarn build && git subtree push --prefix dist origin gh-pages"
+    "deploy": "yarn build && git reset && git add dist && git commit -m 'Deploy' && git subtree push --prefix dist origin gh-pages"
   }
 }
