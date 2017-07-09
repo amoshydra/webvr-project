@@ -30,6 +30,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --open",
-    "build": "webpack"
+    "build": "webpack",
+    "deploy": "yarn build && git subtree push --prefix dist origin gh-pages"
   }
 }
