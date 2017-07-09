@@ -3,46 +3,42 @@
 </template>
 
 <script>
+
+const MAX_SPEED = 0.1;
+let animationRequestId = null;
+
 export default {
   props: ['value'],
   data() {
     return {
-      isTouching: 0, // 0: false, 1: first touch, 2: moving
-      touchStart: {
-        x: 0, z: 0,
-      },
-      touchDiff: {
-        x: 0, z: 0,
+      speed: {
+        x: 0,
+        y: 0,
+        z: 0,
       }
     };
   },
   mounted() {
-    this.$el.addEventListener('touchend', (event) => {
-      this.isTouching = 0;
-    });
+    const move = () => {
+      this.$emit('input', {
+        x: this.value.x + this.speed.x,
+        y: this.value.y + this.speed.y,
+        z: this.value.z + this.speed.z,
+      });
+      console.log(this.speed.x, this.speed.y, this.speed.z);
+      animationRequestId = window.requestAnimationFrame(move);
+    };
+
     this.$el.addEventListener('touchstart', (event) => {
-      this.isTouching = 1;
+      animationRequestId = window.requestAnimationFrame(move);
+
+    });
+    this.$el.addEventListener('touchend', (event) => {
+      window.cancelAnimationFrame(animationRequestId);
     });
     this.$el.addEventListener('axismove', (event) => {
-      if (event.detail.axis[0] + event.detail.axis[1] === 0) return;
-
-      if (this.isTouching === 1) {
-        this.touchStart.x = event.detail.axis[0];
-        this.touchStart.z = event.detail.axis[1];
-        this.isTouching = 2;
-      }
-
-      this.touchDiff.x = event.detail.axis[0] - this.touchStart.x;
-      this.touchDiff.z = event.detail.axis[1] - this.touchStart.z;
-
-      this.$emit('input', {
-        x: this.value.x + this.touchDiff.x,
-        y: this.value.y,
-        z: this.value.z + this.touchDiff.z,
-      });
-
-      this.touchStart.x = event.detail.axis[0];
-      this.touchStart.z = event.detail.axis[1];
+      this.speed.x = MAX_SPEED * event.detail.axis[0];
+      this.speed.z = MAX_SPEED * event.detail.axis[1];
     });
   },
 }
