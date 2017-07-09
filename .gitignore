@@ -1,4 +1,5 @@
-dist
+# dist folder is not ignored for publishing to ghpage
+# dist
 
 # Created by https://www.gitignore.io/api/git,node,linux,macos,windows,sublimetext,visualstudiocode
 
