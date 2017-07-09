@@ -53,6 +53,14 @@ module.exports = {
         'argsIgnorePattern': 'next'
       }
     ],
+    'import/extensions': [
+      'error',
+      'always',
+      {
+        'js': 'never',
+        'vue': 'never'
+      }
+    ],
     'default-case': 'error',
     'no-else-return': 'off',
     'no-param-reassign': 'off',

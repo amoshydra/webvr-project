@@ -12,7 +12,7 @@ const webpackConfig = {
   entry: {
     pre: path.join(__dirname, paths.src, 'scripts/pre.js'),
     post: path.join(__dirname, paths.src, 'scripts/post.js'),
-    app: path.join(__dirname, paths.src, 'app.js'),
+    main: path.join(__dirname, paths.src, 'main.js'),
   },
   output: {
     filename: `${paths.assets}/[name].js`,
@@ -20,8 +20,24 @@ const webpackConfig = {
     publicPath: '/',
   },
 
+  resolve: {
+    extensions: ['.js', '.json', '.vue'],
+  },
+
   module: {
     rules: [{
+      /* Enable Vue's Single File Components */
+      test: /\.vue$/,
+      use: {
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            // Vue need to be transpiled to ES5
+            js: 'babel-loader?presets[]=es2015,presets[]=stage-0',
+          }
+        },
+      }
+    }, {
       test: /\.js$/,
       exclude: /(node_modules|bower_components)/,
       use: {
@@ -37,8 +53,7 @@ const webpackConfig = {
         // resolve-url-loader may be chained before sass-loader if necessary
         use: ['css-loader', 'sass-loader']
       })
-    },
-    ],
+    }],
   },
 };
 
