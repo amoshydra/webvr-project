@@ -8,7 +8,7 @@ const MAX_SPEED = 0.1;
 let animationRequestId = null;
 
 export default {
-  props: ['value'],
+  props: ['value', 'camera'],
   data() {
     return {
       speed: {
@@ -20,12 +20,19 @@ export default {
   },
   mounted() {
     const move = () => {
+      const radian = this.camera.getAttribute('rotation').y * (Math.PI / 180);
+
+      const cosRad = Math.cos(radian);
+      const sinRad = Math.sin(radian);
+
+      const moveX = (this.speed.x * cosRad) + (this.speed.z * sinRad);
+      const moveZ = (this.speed.z * cosRad) + (this.speed.x * sinRad);
+
       this.$emit('input', {
-        x: this.value.x + this.speed.x,
+        x: this.value.x + moveX,
         y: this.value.y + this.speed.y,
-        z: this.value.z + this.speed.z,
+        z: this.value.z + moveZ,
       });
-      console.log(this.speed.x, this.speed.y, this.speed.z);
       animationRequestId = window.requestAnimationFrame(move);
     };
 

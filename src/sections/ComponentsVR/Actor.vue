@@ -1,11 +1,12 @@
 <template>
   <a-entity>
-    <a-entity 
+    <a-entity
+      ref="camera"
       camera="userHeight: 1.6"
       look-controls
       :position="positionAttribute">
     </a-entity>
-    <Controller v-model="position"></Controller>
+    <Controller v-model="position" :camera="camera"></Controller>
   </a-entity>
 </template>
 
@@ -21,7 +22,8 @@ export default {
         x: 0,
         y: 1.6,
         z: 0,
-      }
+      },
+      camera: {},
     }
   },
   computed: {
@@ -29,5 +31,10 @@ export default {
       return `${this.position.x} ${this.position.y} ${this.position.z}`;
     },
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.camera = this.$refs.camera;
+    });
+  }
 }
 </script>
