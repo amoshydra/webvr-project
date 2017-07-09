@@ -17,7 +17,7 @@ const webpackConfig = {
   output: {
     filename: `${paths.assets}/[name].js`,
     path: path.resolve(paths.dist),
-    publicPath: '/',
+    publicPath: '',
   },
 
   resolve: {
