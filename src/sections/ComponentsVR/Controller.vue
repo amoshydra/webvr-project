@@ -1,14 +1,21 @@
 <template>
-  <a-entity daydream-controls
-            raycaster="far: 5"></a-entity>
+  <a-entity ref="controller"
+            daydream-controls="model: false;"
+            raycaster="far: 1; objects: .interactable">
+    <Cane></Cane>
+  </a-entity>
 </template>
 
 <script>
-
+import eventHub from '../EventManager';
+import Cane from '../Scene/Props/Cane';
 const MAX_SPEED = 0.1;
 let animationRequestId = null;
 
 export default {
+  components: {
+    Cane,
+  },
   props: ['value', 'camera'],
   data() {
     return {
@@ -80,9 +87,11 @@ export default {
     const interactionController = [
       ['buttondown', (event) => {
         console.log('buttondown');
+        eventHub.$emit('buttondown');
       }],
       ['buttonup', (event) => {
         console.log('buttonup');
+        eventHub.$emit('buttonup');
       }],
     ];
 
@@ -90,7 +99,7 @@ export default {
       ...movementController,
       ...interactionController,
     ].forEach((listener) => {
-      this.$el.addEventListener(...listener);
+      this.$refs.controller.addEventListener(...listener);
     });
   },
 }
