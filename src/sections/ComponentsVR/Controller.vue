@@ -16,11 +16,12 @@ export default {
         x: 0,
         y: 0,
         z: 0,
-      }
+      },
+      isControllerMovement: false,
     };
   },
-  mounted() {
-    const move = () => {
+  methods: {
+    moveActor() {
       /**
        * +ve: Looking right
        * -ve: Looking left
@@ -39,18 +40,57 @@ export default {
         z: this.value.z + moveZ,
       };
       this.$emit('input', movementData);
-      animationRequestId = window.requestAnimationFrame(move);
-    };
+      animationRequestId = window.requestAnimationFrame(this.moveActor);
+    },
+  },
+  watch: {
+    isControllerMovement(newVal, oldVal) {
+      if (newVal === oldVal) return;
 
-    this.$el.addEventListener('touchstart', (event) => {
-      animationRequestId = window.requestAnimationFrame(move);
-    });
-    this.$el.addEventListener('touchend', (event) => {
-      window.cancelAnimationFrame(animationRequestId);
-    });
-    this.$el.addEventListener('axismove', (event) => {
-      this.speed.x = MAX_SPEED * event.detail.axis[0];
-      this.speed.z = MAX_SPEED * event.detail.axis[1];
+      if (newVal) {
+        animationRequestId = window.requestAnimationFrame(this.moveActor);
+      } else {
+        window.cancelAnimationFrame(animationRequestId);
+      }
+    },
+  },
+  mounted() {
+    /**
+     * Relevant documentation on the type of events available can
+     * be found here;
+     * https://aframe.io/docs/0.6.0/components/laser-controls.html
+     * https://aframe.io/docs/0.6.0/components/hand-controls.html
+     */
+    const movementController = [
+      ['touchend', (event) => {
+        this.isControllerMovement = false;
+      }],
+      ['axismove', (event) => {
+        const x = event.detail.axis[0];
+        const z = event.detail.axis[1];
+
+        const distance = (x * x) + (z * z);
+        this.isControllerMovement = (distance > 0.4);
+
+        this.speed.x = MAX_SPEED * x;
+        this.speed.z = MAX_SPEED * z;
+      }],
+    ];
+
+    const interactionController = [
+      ['buttondown', (event) => {
+        console.log('buttondown');
+      }],
+      ['buttonup', (event) => {
+        console.log('buttonup');
+      }],
+    ];
+
+    [
+      ...movementController,
+      ...interactionController,
+    ].forEach((listener) => {
+      this.$el.addEventListener(...listener);
     });
   },
 }
