@@ -1,5 +1,6 @@
 <template>
-  <a-entity daydream-controls></a-entity>
+  <a-entity daydream-controls
+            raycaster="far: 5"></a-entity>
 </template>
 
 <script>
