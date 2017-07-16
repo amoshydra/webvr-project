@@ -20,25 +20,29 @@ export default {
   },
   mounted() {
     const move = () => {
-      const radian = this.camera.getAttribute('rotation').y * (Math.PI / 180);
+      /**
+       * +ve: Looking right
+       * -ve: Looking left
+       */
+      const radian = -this.camera.getAttribute('rotation').y * (Math.PI / 180);
 
       const cosRad = Math.cos(radian);
       const sinRad = Math.sin(radian);
 
-      const moveX = (this.speed.x * cosRad) + (this.speed.z * sinRad);
+      const moveX = (this.speed.x * cosRad) - (this.speed.z * sinRad);
       const moveZ = (this.speed.z * cosRad) + (this.speed.x * sinRad);
 
-      this.$emit('input', {
+      const movementData = {
         x: this.value.x + moveX,
         y: this.value.y + this.speed.y,
         z: this.value.z + moveZ,
-      });
+      };
+      this.$emit('input', movementData);
       animationRequestId = window.requestAnimationFrame(move);
     };
 
     this.$el.addEventListener('touchstart', (event) => {
       animationRequestId = window.requestAnimationFrame(move);
-
     });
     this.$el.addEventListener('touchend', (event) => {
       window.cancelAnimationFrame(animationRequestId);
